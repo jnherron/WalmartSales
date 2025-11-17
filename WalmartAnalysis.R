@@ -12,6 +12,7 @@ test_data <- vroom("test.csv.zip")
 stores_data <- vroom("stores.csv")
 features_data <- vroom("features.csv.zip")
 
+# Join Datasets
 train_data <- left_join(train_data, stores_data, by = "Store")
 
 train_data$Store_Date <- paste0(as.character(train_data$Store), "_", as.character(train_data$Date))
@@ -20,6 +21,23 @@ features_data$Store <- NULL
 features_data$Date <- NULL
 features_data$IsHoliday <- NULL
 train_data <- left_join(train_data, features_data, by = "Store_Date")
+
+# Get rid of NA's
+train_data$MarkDown1[is.na(train_data$MarkDown1)] <- 0
+train_data$MarkDown2[is.na(train_data$MarkDown2)] <- 0
+train_data$MarkDown3[is.na(train_data$MarkDown3)] <- 0
+train_data$MarkDown4[is.na(train_data$MarkDown4)] <- 0
+train_data$MarkDown5[is.na(train_data$MarkDown5)] <- 0
+
+# More MarkDown Wrangling
+train_data$TotalMarkDown <- train_data$MarkDown1 + train_data$MarkDown2 + train_data$MarkDown3 + train_data$MarkDown4 + train_data$MarkDown5
+train_data$MarkDownFlag <- ifelse(train_data$TotalMarkDown != 0, TRUE, FALSE)
+train_data$MarkDown1 <- NULL
+train_data$MarkDown2 <- NULL
+train_data$MarkDown3 <- NULL
+train_data$MarkDown4 <- NULL
+train_data$MarkDown5 <- NULL
+
 
 
 # EDA --------------------------------------------------------------------------
